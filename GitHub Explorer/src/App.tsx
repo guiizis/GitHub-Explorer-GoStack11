@@ -1,9 +1,19 @@
 import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom'
+import { Routes } from './routes'
+
+
+import { MainContentStyles } from '../src/styles/globalStyle'
 
 
 function App() {
   return (
-    <h1>Hello World</h1>
+    <>
+      <Router>
+        <Routes />
+      </Router>
+      <MainContentStyles />
+    </>
   );
 }
 
