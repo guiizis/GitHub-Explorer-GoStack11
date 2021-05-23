@@ -7,6 +7,6 @@ import { Repositories } from '../pages/Repositories'
 export const Routes: React.FC = () => (
   <Switch>
     <Route path="/" exact component={DashBoard} />
-    <Route path="/repositories" component={Repositories} />
+    <Route path="/repositories/:repository+" component={Repositories} />
   </Switch>
 )

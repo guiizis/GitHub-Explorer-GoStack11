@@ -2,8 +2,9 @@
 import { Title, Form, Repositories, InputError } from './styles'
 import { FiChevronRight } from 'react-icons/fi'
 import LogoImg from '../../assets/log.svg'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { api } from '../../services/api'
+import { Link } from 'react-router-dom'
 
 interface IRepositoryProps {
   full_name: string,
@@ -20,7 +21,14 @@ export const DashBoard: React.FC = () => {
 
   const [repoInputValue, setRepoInputValue] = useState('')
   const [error, setError] = useState('')
-  const [repositories, setRepositories] = useState<IRepositoryProps[]>([])
+  const [repositories, setRepositories] = useState<IRepositoryProps[]>(() => {
+    const localStorageItems = localStorage.getItem("@GitHubExplorer")
+    if (localStorageItems) {
+      return JSON.parse(localStorageItems)
+    } else {
+      return []
+    }
+  })
 
   async function handleRepository(event: FormEvent) {
     event.preventDefault()
@@ -41,6 +49,10 @@ export const DashBoard: React.FC = () => {
 
   }
 
+  useEffect(() => {
+    localStorage.setItem("@GitHubExplorer", JSON.stringify(repositories))
+  }, [repositories])
+
   return (
     <>
       <img src={LogoImg} alt="img" />
@@ -48,7 +60,7 @@ export const DashBoard: React.FC = () => {
         Explore Repósitorio do GitHub
       </Title>
       <Form hasError={!!error} onSubmit={handleRepository}>
-        <input value={repoInputValue} type="text" placeholder="Digite o Nome Do Repósitorio" onChange={(e) => setRepoInputValue(e.target.value)} />
+        <input value={repoInputValue} type="text" placeholder="Digite o Nome Do Usuario/  Repósitorio" onChange={(e) => setRepoInputValue(e.target.value)} />
         <button>Pequisar</button>
       </Form>
 
@@ -57,14 +69,14 @@ export const DashBoard: React.FC = () => {
       <Repositories>
         {repositories.map(repository => {
           return (
-            <a href={repository.html_url}>
+            <Link key={repository.html_url} to={`repositories/${repository.full_name}`}>
               <img src={repository.owner.avatar_url} alt="User Profile Pic" />
               <div>
-                <strong>{repository.owner.login}</strong>
+                <strong>{repository.full_name}</strong>
                 <p>{repository.description} </p>
               </div>
               <FiChevronRight size={20} />
-            </a>
+            </Link>
           )
         })}
       </Repositories>
